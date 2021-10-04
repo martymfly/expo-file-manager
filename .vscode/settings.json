@@ -1,0 +1,5 @@
+{
+    "editor.formatOnSave": true,
+    "scm.autoReveal": false,
+    "html.format.wrapLineLength": 0
+}
