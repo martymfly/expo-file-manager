@@ -1,22 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, TextInput } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 
 import * as FileSystem from 'expo-file-system';
 import Constants from 'expo-constants';
 
+import { BarCodeScanner } from 'expo-barcode-scanner';
 import { io, Socket } from 'socket.io-client';
 
 import { useAppSelector } from '../hooks/reduxHooks';
 import { fileItem, fileRequestMessage } from '../types';
 
 import { SIZE } from '../utils/Constants';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const FileTransfer: React.FC = () => {
   const { colors } = useAppSelector((state) => state.theme.theme);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(true);
   const [socket, setSocket] = useState<Socket>(io());
-  const [socketURL, setSocketURL] = useState('http://localhost:3000');
+  const [socketURL, setSocketURL] = useState('');
   const [roomID, setRoomID] = useState('1234');
-  const [state, setState] = useState(false);
+  const [_, setState] = useState(false);
 
   const connectServer = () => {
     if (!socket.connected) {
@@ -33,10 +44,22 @@ const FileTransfer: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  useEffect(() => {
     socket.on('connected', (data) => {
       console.log(data);
     });
   }, [socket]);
+
+  const handleScan = ({ _, data }) => {
+    setScanned(true);
+    setSocketURL(data);
+  };
 
   const joinRoom = () => {
     socket.emit('joinRoom', { room: roomID, device: 'phone' });
@@ -69,7 +92,6 @@ const FileTransfer: React.FC = () => {
     });
 
     socket.on('readfile', (msg: fileRequestMessage) => {
-      console.log(msg);
       const baseDir =
         msg.basedir === 'docdir'
           ? FileSystem.documentDirectory
@@ -79,7 +101,7 @@ const FileTransfer: React.FC = () => {
         encoding: 'base64',
       })
         .then((file) => {
-          transferChunks(file, 1024 * 100, file.length, socket);
+          transferChunks(file, 1024 * 300, file.length, socket);
         })
         .catch((err) => console.log(err));
     });
@@ -101,25 +123,122 @@ const FileTransfer: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      {!scanned && hasPermission && (
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleScan}
+          style={StyleSheet.absoluteFillObject}
+        />
+      )}
       <View style={styles.section}>
-        <Text style={{ color: colors.primary }}>
-          Socket Status: {socket.connected ? 'Connected' : 'Disconnected'}
-        </Text>
-        <Text style={{ color: colors.primary }}>Socket URL: {socketURL}</Text>
-        <Text style={{ color: colors.primary }}>Socket ID: {socket.id}</Text>
-        <View style={styles.roomIDContainer}>
-          <Text style={{ color: colors.primary }}>Room ID:</Text>
-          <TextInput
-            style={[
-              styles.roomInput,
-              { borderColor: colors.primary, color: colors.primary },
-            ]}
-            onChangeText={setRoomID}
-            value={roomID}
-          />
+        <View style={styles.row}>
+          <View style={styles.rowLeft}>
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: 'Poppins_400Regular',
+              }}
+            >
+              Socket Status:
+            </Text>
+          </View>
+          <View style={styles.rowRight}>
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: 'Poppins_400Regular',
+              }}
+            >
+              {socket.connected ? 'Connected' : 'Disconnected'}
+            </Text>
+          </View>
         </View>
-        <Button title="Connect" onPress={connectServer} />
+        <View style={styles.row}>
+          <View style={styles.rowLeft}>
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: 'Poppins_400Regular',
+              }}
+            >
+              Socket URL:
+            </Text>
+          </View>
+          <View style={styles.rowRight}>
+            <TextInput
+              style={[
+                styles.roomInput,
+                {
+                  borderColor: colors.primary,
+                  color: colors.primary,
+                  fontFamily: 'Poppins_400Regular',
+                },
+              ]}
+              onChangeText={setSocketURL}
+              value={socketURL}
+            />
+            <TouchableOpacity
+              style={styles.scanIcon}
+              onPress={() => setScanned((prev) => !prev)}
+            >
+              <MaterialIcons
+                name="qr-code-scanner"
+                size={36}
+                color={colors.text}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.row}>
+          <View style={styles.rowLeft}>
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: 'Poppins_400Regular',
+              }}
+            >
+              Room ID:
+            </Text>
+          </View>
+          <View style={styles.rowRight}>
+            <TextInput
+              style={[
+                styles.roomInput,
+                {
+                  borderColor: colors.primary,
+                  color: colors.primary,
+                  fontFamily: 'Poppins_400Regular',
+                },
+              ]}
+              onChangeText={setRoomID}
+              value={roomID}
+            />
+          </View>
+        </View>
+        <View style={styles.row}>
+          <View style={styles.rowLeft}>
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: 'Poppins_400Regular',
+              }}
+            >
+              Socket ID:
+            </Text>
+          </View>
+          <View style={styles.rowRight}>
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: 'Poppins_400Regular',
+              }}
+            >
+              {socket.id}
+            </Text>
+          </View>
+        </View>
+
         <Button title="Join Room" onPress={joinRoom} />
+        <Button title="Connect" onPress={connectServer} />
         <Button
           title="Disconnect"
           onPress={() => {
@@ -145,12 +264,22 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
   },
+  row: {
+    display: 'flex',
+    width: SIZE,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 40,
+  },
+  rowLeft: { width: '30%', padding: 1 },
+  rowRight: { width: '70%', padding: 1, position: 'relative' },
   roomInput: {
     height: 40,
-    width: SIZE * 0.5,
-    margin: 12,
+    width: SIZE * 0.65,
     borderWidth: 1,
     padding: 10,
+    borderRadius: 5,
   },
   roomIDContainer: {
     width: '100%',
@@ -158,6 +287,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+  scanIcon: {
+    position: 'absolute',
+    right: 20,
   },
 });
 
