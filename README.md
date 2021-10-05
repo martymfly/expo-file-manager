@@ -40,8 +40,8 @@ Here are some other features:
   - Run on Android: `yarn android` (or `npm run android`).
 
   - Run on iOS: `yarn ios` (or `npm run ios`).
-
-  - Run on both Android & iOS: `yarn mobile` (or `npm run mobile`).
+  
+  - Run on Web: `yarn web` (or `npm run web`).
 
 
 ## Contributing
