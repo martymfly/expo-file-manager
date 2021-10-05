@@ -3,7 +3,7 @@
   <h3 align="center">Expo File Manager</h3>
 
   <p align="center">
-    A file manager app built with react native & expo!
+    A file manager app built with React Native & Expo.
   </p>
 </div>
 
