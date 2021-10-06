@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Platform,
   Alert,
+  BackHandler,
 } from 'react-native';
 
 import Dialog from 'react-native-dialog';
@@ -95,6 +96,20 @@ const Browser = ({ route }: IBrowserProps) => {
       );
     }
   }, [route]);
+
+  useEffect(() => {
+    const backAction = () => {
+      if (navigation.canGoBack()) navigation.goBack();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const renderItem = ({ item }: { item: fileItem }) => (
     <FileItem

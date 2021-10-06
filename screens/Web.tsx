@@ -28,7 +28,6 @@ const Web: React.FC = () => {
 
   useEffect(() => {
     const backAction = () => {
-      console.log('back');
       browserRef.current.goBack();
       return true;
     };
