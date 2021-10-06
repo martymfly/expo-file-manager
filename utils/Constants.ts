@@ -3,6 +3,7 @@ import { Dimensions } from 'react-native';
 export const { width: SIZE, height: HEIGHT } = Dimensions.get('window');
 
 export const reExt = new RegExp(/(?:\.([^.]+))?$/);
+export const base64reg = /data:image\/[^;]+;base64,/;
 
 export const fileIcons = {
   json: 'code-json',

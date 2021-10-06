@@ -80,6 +80,14 @@ export type newFolderRequest = {
   path: string;
 };
 
+export type newFileTransfer = {
+  name: string;
+  file: string;
+  size: number;
+  device: string;
+  path: string;
+};
+
 export type SubNavigator<T extends ParamListBase> = {
   [K in keyof T]: { screen: K; params?: T[K] };
 }[keyof T];

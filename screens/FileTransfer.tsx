@@ -15,9 +15,14 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { io, Socket } from 'socket.io-client';
 
 import { useAppSelector } from '../hooks/reduxHooks';
-import { fileItem, fileRequestMessage, newFolderRequest } from '../types';
+import {
+  fileItem,
+  fileRequestMessage,
+  newFileTransfer,
+  newFolderRequest,
+} from '../types';
 
-import { SIZE } from '../utils/Constants';
+import { base64reg, SIZE } from '../utils/Constants';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const FileTransfer: React.FC = () => {
@@ -28,6 +33,7 @@ const FileTransfer: React.FC = () => {
   const [socketURL, setSocketURL] = useState('');
   const [roomID, setRoomID] = useState('1234');
   const [_, setState] = useState(false);
+  const fileChunk = React.useRef('');
 
   const connectServer = () => {
     if (!socket.connected) {
@@ -114,6 +120,23 @@ const FileTransfer: React.FC = () => {
           FileSystem.makeDirectoryAsync(newFolderURI);
         }
       });
+    });
+
+    socket.on('sendfile', (msg: newFileTransfer) => {
+      fileChunk.current += msg.file;
+      if (msg.file.length === msg.size) {
+        const base64Data = fileChunk.current.replace(base64reg, '');
+        const newFilePath =
+          FileSystem.documentDirectory + '/' + msg.path + '/' + msg.name;
+        FileSystem.getInfoAsync(newFilePath).then((res) => {
+          if (!res.exists) {
+            FileSystem.writeAsStringAsync(newFilePath, base64Data, {
+              encoding: 'base64',
+            });
+          }
+        });
+        fileChunk.current = '';
+      }
     });
   };
 
