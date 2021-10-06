@@ -15,7 +15,7 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { io, Socket } from 'socket.io-client';
 
 import { useAppSelector } from '../hooks/reduxHooks';
-import { fileItem, fileRequestMessage } from '../types';
+import { fileItem, fileRequestMessage, newFolderRequest } from '../types';
 
 import { SIZE } from '../utils/Constants';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -104,6 +104,16 @@ const FileTransfer: React.FC = () => {
           transferChunks(file, 1024 * 300, file.length, socket);
         })
         .catch((err) => console.log(err));
+    });
+
+    socket.on('newfolder', (msg: newFolderRequest) => {
+      const newFolderURI =
+        FileSystem.documentDirectory + '/' + msg.path + '/' + msg.name;
+      FileSystem.getInfoAsync(newFolderURI).then((res) => {
+        if (!res.exists) {
+          FileSystem.makeDirectoryAsync(newFolderURI);
+        }
+      });
     });
   };
 
