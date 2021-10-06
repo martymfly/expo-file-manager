@@ -216,7 +216,7 @@ export default function FileItem({
               numberOfLines={1}
               style={{ ...styles.fileName, color: colors.primary }}
             >
-              {item.name}
+              {decodeURI(item.name)}
             </Text>
             <Text style={{ ...styles.fileDetailText, color: colors.secondary }}>
               {humanFileSize(item.size)}
