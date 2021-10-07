@@ -38,6 +38,7 @@
     "react-native-image-gallery": "martymfly/react-native-image-gallery",
     "react-native-mime-types": "^2.3.0",
     "react-native-modal": "*",
+    "react-native-paper": "^4.9.2",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-simple-dialogs": "*",

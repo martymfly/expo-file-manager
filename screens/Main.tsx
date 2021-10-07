@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { LogBox, View } from 'react-native';
 
 import { StatusBar } from 'expo-status-bar';
+import { Snackbar } from 'react-native-paper';
 import {
   NavigationContainer,
   DarkTheme,
@@ -21,10 +22,11 @@ import AppLoading from 'expo-app-loading';
 
 import { MainNavigator } from '../navigation/MainNavigator';
 
-import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import useColorScheme from '../hooks/useColorScheme';
 import useLock from '../hooks/useLock';
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import { setLightTheme, setDarkTheme } from '../features/files/themeSlice';
+import { hideSnack } from '../features/files/snackbarSlice';
 
 import LockScreen from '../screens/LockScreen';
 
@@ -36,6 +38,11 @@ LogBox.ignoreLogs([
 export default function Main() {
   const { locked, setLocked } = useLock();
   const { theme } = useAppSelector((state) => state.theme);
+  const {
+    isVisible: isSnackVisible,
+    message: snackMessage,
+    label: snackLabel,
+  } = useAppSelector((state) => state.snackbar);
   const colorScheme = useColorScheme();
   const dispatch = useAppDispatch();
 
@@ -82,6 +89,25 @@ export default function Main() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <Snackbar
+        visible={isSnackVisible}
+        style={{ backgroundColor: theme.colors.background3 }}
+        theme={{
+          colors: { surface: theme.colors.text },
+        }}
+        onDismiss={() => dispatch(hideSnack())}
+        duration={2000}
+        action={
+          snackLabel
+            ? {
+                label: snackLabel,
+                onPress: () => {},
+              }
+            : null
+        }
+      >
+        {snackMessage}
+      </Snackbar>
       <StatusBar style={theme.dark ? 'light' : 'dark'} />
       <NavigationContainer theme={theme.dark ? DarkTheme : DefaultTheme}>
         <MainNavigator />

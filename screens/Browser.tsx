@@ -29,7 +29,7 @@ import { NewFolderDialog } from '../components/Browser/NewFolderDialog';
 import { DownloadDialog } from '../components/Browser/DownloadDialog';
 import { FileTransferDialog } from '../components/Browser/FileTransferDialog';
 
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import moment from 'moment';
 import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system';
@@ -43,6 +43,7 @@ import { ImageInfo } from 'expo-image-picker/build/ImagePicker.types';
 import { ExtendedAsset, fileItem } from '../types';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import { setImages } from '../features/files/imagesSlice';
+import { setSnack, snackActionPayload } from '../features/files/snackbarSlice';
 import { HEIGHT, imageFormats, reExt, SIZE } from '../utils/Constants';
 
 type BrowserParamList = {
@@ -128,21 +129,32 @@ const Browser = ({ route }: IBrowserProps) => {
   );
 
   const handleDownload = (downloadUrl: string) => {
-    axios.get(downloadUrl).then((res) => {
-      const fileExt = mime.extension(res.headers['content-type']);
-      FileSystem.downloadAsync(
-        downloadUrl,
-        currentDir + '/DL_' + moment().format('DDMMYHmmss') + '.' + fileExt
-      )
-        .then(() => {
-          getFiles();
-          setDownloadDialogVisible(false);
+    axios
+      .get(downloadUrl)
+      .then((res) => {
+        const fileExt = mime.extension(res.headers['content-type']);
+        FileSystem.downloadAsync(
+          downloadUrl,
+          currentDir + '/DL_' + moment().format('DDMMYHmmss') + '.' + fileExt
+        )
+          .then(() => {
+            getFiles();
+            setDownloadDialogVisible(false);
+            handleSetSnack({
+              message: 'Download complete',
+            });
+          })
+          .catch((_) => {
+            handleSetSnack({
+              message: 'Please provide a correct url',
+            });
+          });
+      })
+      .catch((error: AxiosError) =>
+        handleSetSnack({
+          message: error.message,
         })
-        .catch((error) => {
-          alert('Please provide a correct url');
-          console.log(error);
-        });
-    });
+      );
   };
 
   const toggleSelect = (item: fileItem) => {
@@ -225,7 +237,9 @@ const Browser = ({ route }: IBrowserProps) => {
         setFolderDialogVisible(false);
       })
       .catch(() => {
-        alert('Folder could not be created or already exists.');
+        handleSetSnack({
+          message: 'Folder could not be created or already exists.',
+        });
       });
   }
 
@@ -235,7 +249,10 @@ const Browser = ({ route }: IBrowserProps) => {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
+          handleSetSnack({
+            message:
+              'Sorry, we need camera roll permissions to make this work!',
+          });
         }
         MediaLibrary.requestPermissionsAsync();
       }
@@ -261,7 +278,7 @@ const Browser = ({ route }: IBrowserProps) => {
           '.' +
           ext,
       })
-        .then((res) => getFiles())
+        .then((_) => getFiles())
         .catch((err) => console.log(err));
     }
   };
@@ -297,9 +314,7 @@ const Browser = ({ route }: IBrowserProps) => {
             to: destination + '/' + file.name,
           });
       });
-      allProgress(transferPromises, (p) => {
-        console.log(p);
-      }).then((_) => {
+      allProgress(transferPromises, (p) => {}).then((_) => {
         setDestinationDialogVisible(false);
         setMoveDir('');
         setMoveOrCopy('');
@@ -342,7 +357,9 @@ const Browser = ({ route }: IBrowserProps) => {
     );
     Promise.all(deleteProms)
       .then((_) => {
-        alert('Files deleted!');
+        handleSetSnack({
+          message: 'Files deleted!',
+        });
         getFiles();
         setSelectedFiles([]);
       })
@@ -359,7 +376,9 @@ const Browser = ({ route }: IBrowserProps) => {
       .join('/');
     FileSystem.getInfoAsync(fileFolderPath + '/' + newFileName).then((res) => {
       if (res.exists)
-        alert('A folder or file with the same name already exists.');
+        handleSetSnack({
+          message: 'A folder or file with the same name already exists.',
+        });
       else
         FileSystem.moveAsync({
           from: renamingFile.uri,
@@ -369,8 +388,16 @@ const Browser = ({ route }: IBrowserProps) => {
             setRenameDialogVisible(false);
             getFiles();
           })
-          .catch(() => alert(''));
+          .catch((_) =>
+            handleSetSnack({
+              message: 'Error renaming the file/folder',
+            })
+          );
     });
+  };
+
+  const handleSetSnack = (data: snackActionPayload) => {
+    dispatch(setSnack(data));
   };
 
   return (
