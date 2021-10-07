@@ -77,7 +77,7 @@ export default function FileItem({
   const ItemThumbnail = () => {
     switch (itemType) {
       case 'dir':
-        return <AntDesign name="folder1" size={35} color={colors.primary} />;
+        return <Feather name="folder" size={35} color={colors.primary} />;
       case 'image':
       case 'video':
         return <ThumbnailImage uri={item.uri} />;

@@ -489,7 +489,7 @@ const Browser = ({ route }: IBrowserProps) => {
             <AntDesign name="addfile" size={30} color={colors.primary} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setFolderDialogVisible(true)}>
-            <AntDesign name="addfolder" size={30} color={colors.primary} />
+            <Feather name="folder-plus" size={30} color={colors.primary} />
           </TouchableOpacity>
         </View>
         {multiSelect && (
