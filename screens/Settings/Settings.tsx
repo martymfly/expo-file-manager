@@ -9,7 +9,7 @@ import { setDarkTheme, setLightTheme } from '../../features/files/themeSlice';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 import useBiometrics from '../../hooks/useBiometrics';

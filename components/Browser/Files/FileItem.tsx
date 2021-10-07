@@ -12,7 +12,7 @@ import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 
 import * as Sharing from 'expo-sharing';
 import * as mime from 'react-native-mime-types';
