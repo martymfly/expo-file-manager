@@ -7,14 +7,16 @@ import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-import { useAppSelector } from '../../hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import useLock from '../../hooks/useLock';
 
 import { SIZE } from '../../utils/Constants';
+import { setSnack } from '../../features/files/snackbarSlice';
 
 const DIGIT_SIZE = SIZE / 6;
 
 const SetPassCodeScreen: React.FC = () => {
+  const dispatch = useAppDispatch();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { colors } = useAppSelector((state) => state.theme.theme);
   const [newPinFirst, setNewPinFirst] = useState<string>('');
@@ -43,12 +45,12 @@ const SetPassCodeScreen: React.FC = () => {
       if (secret === checkPin) {
         SecureStore.deleteItemAsync('secret').then(() => {
           SecureStore.deleteItemAsync('hasPassCode').then(() => {
-            alert('PIN Code Removed!');
+            dispatch(setSnack({ message: 'PIN Code Removed!' }));
             navigation.goBack();
           });
         });
       } else {
-        alert('Wrong PIN!');
+        dispatch(setSnack({ message: 'Wrong PIN!' }));
         setCheckPin('');
       }
     }
@@ -65,7 +67,7 @@ const SetPassCodeScreen: React.FC = () => {
         if (newPinFirst === newPinSecond) {
           savePintoStorage();
         } else {
-          alert('Pins do not match!');
+          dispatch(setSnack({ message: 'Pins do not match!' }));
           setNewPinFirst('');
           setNewPinSecond('');
           setFirstPinDone(false);
@@ -77,7 +79,7 @@ const SetPassCodeScreen: React.FC = () => {
   const savePintoStorage = async () => {
     SecureStore.setItemAsync('hasPassCode', JSON.stringify(true)).then(() => {
       SecureStore.setItemAsync('secret', newPinFirst).then(() => {
-        alert('PIN Code Set!');
+        dispatch(setSnack({ message: 'PIN Code Set!' }));
         navigation.goBack();
       });
     });

@@ -8,9 +8,10 @@ import * as SecureStore from 'expo-secure-store';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 import useBiometrics from '../hooks/useBiometrics';
-import { useAppSelector } from '../hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 
 import { SIZE } from '../utils/Constants';
+import { setSnack } from '../features/files/snackbarSlice';
 
 const DIGIT_SIZE = SIZE / 6;
 
@@ -19,6 +20,7 @@ type ILockScreenProps = {
 };
 
 const LockScreen = ({ setLocked }: ILockScreenProps) => {
+  const dispatch = useAppDispatch();
   const { colors } = useAppSelector((state) => state.theme.theme);
   const { biometricsActive } = useBiometrics();
   const [secret, setSecret] = useState('');
@@ -53,7 +55,7 @@ const LockScreen = ({ setLocked }: ILockScreenProps) => {
           setLocked(false);
         }, 10);
       } else {
-        alert('Wrong PIN!');
+        dispatch(setSnack({ message: 'Wrong PIN!' }));
         setCheckPin('');
       }
     }

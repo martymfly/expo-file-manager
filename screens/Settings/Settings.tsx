@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 import useBiometrics from '../../hooks/useBiometrics';
+import { setSnack } from '../../features/files/snackbarSlice';
 import { SIZE } from '../../utils/Constants';
 
 function Settings() {
@@ -135,7 +136,9 @@ function Settings() {
               value={biometricsActive}
               onTouchStart={() => {
                 if (!hasHardware) {
-                  alert('Device has no biometrics hardware');
+                  dispatch(
+                    setSnack({ message: 'Device has no biometrics hardware' })
+                  );
                 }
               }}
               disabled={!hasHardware}
@@ -148,7 +151,7 @@ function Settings() {
                 if (hasHardware && isEnrolled) {
                   handleBiometricsStatus();
                 } else if (hasHardware && !isEnrolled) {
-                  alert('No biometrics enrolled!');
+                  dispatch(setSnack({ message: 'No biometrics enrolled!' }));
                 }
               }}
             />
