@@ -421,9 +421,9 @@ const Browser = ({ route }: IBrowserProps) => {
         setDownloadDialog={setDownloadDialogVisible}
       />
       <Dialog.Container visible={renameDialogVisible}>
-        <Dialog.Title>Rename {renamingFile?.name}</Dialog.Title>
+        <Dialog.Title>Rename {decodeURI(renamingFile?.name)}</Dialog.Title>
         <Dialog.Input
-          value={newFileName}
+          value={decodeURI(newFileName)}
           onChangeText={(text) => setNewFileName(text)}
         ></Dialog.Input>
         <Dialog.Button

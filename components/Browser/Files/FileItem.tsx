@@ -135,7 +135,9 @@ export default function FileItem({
     <View style={styles.container}>
       <ActionSheet
         title={
-          multiSelect ? 'Choose an action for the selected items' : item.name
+          multiSelect
+            ? 'Choose an action for the selected items'
+            : decodeURI(item.name)
         }
         visible={itemActionsOpen}
         actionItems={['Rename', 'Move', 'Copy', 'Share', 'Delete', 'Cancel']}
