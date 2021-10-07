@@ -52,6 +52,7 @@
     "react-native-unimodules": "~0.14.5",
     "react-native-webview": "11.6.2",
     "react-redux": "^7.2.5",
+    "rn-pdf-reader-js": "^4.1.1",
     "socket.io-client": "*",
     "tailwind-rn": "*"
   },
