@@ -200,7 +200,10 @@ const Browser = ({ route }: IBrowserProps) => {
     FileSystem.readDirectoryAsync(currentDir)
       .then((dirFiles) => {
         if (currentDir !== route?.params?.prevDir) {
-          const filesProms = dirFiles.map((fileName) =>
+          const filteredFiles = dirFiles.filter(
+            (file) => file !== 'RCTAsyncLocalStorage'
+          );
+          const filesProms = filteredFiles.map((fileName) =>
             FileSystem.getInfoAsync(currentDir + '/' + fileName)
           );
           Promise.all(filesProms).then((results) => {
