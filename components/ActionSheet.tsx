@@ -9,6 +9,7 @@ import {
   TextStyle,
   FlatList,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 
 import { MaterialIcons } from '@expo/vector-icons';
@@ -55,8 +56,14 @@ const ActionSheet = ({
       <TouchableOpacity
         style={[styles.itemStyle, itemStyle]}
         onPress={() => {
-          onItemPressed(index);
           onClose(false);
+          if (Platform.OS === 'ios') {
+            setTimeout(() => {
+              onItemPressed(index);
+            }, 1000);
+          } else {
+            onItemPressed(index);
+          }
         }}
       >
         <View style={styles.iconContainer}>

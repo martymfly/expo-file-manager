@@ -50,8 +50,12 @@ export const FileTransferDialog = ({
       const folderItems = values
         .filter((item) => item.isDirectory)
         .map((item) => {
-          const pathSplit = item.uri.split('/');
-          const folderName = pathSplit[pathSplit.length - 1];
+          const folderName = item.uri.endsWith('/')
+            ? item.uri
+                .slice(0, item.uri.length - 1)
+                .split('/')
+                .pop()
+            : item.uri.split('/').pop();
           return folderName;
         });
       setCurrentFolders(folderItems);
@@ -148,7 +152,7 @@ export const FileTransferDialog = ({
         </View>
         <FlatList
           data={currentFolders}
-          keyExtractor={(item) => item}
+          keyExtractor={(_, index) => index.toString()}
           renderItem={({ item }) => (
             <RenderItem item={item} moveDir={moveDir} setMoveDir={setMoveDir} />
           )}
