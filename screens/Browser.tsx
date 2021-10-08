@@ -34,6 +34,7 @@ import moment from 'moment';
 import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
 import * as mime from 'react-native-mime-types';
 
@@ -258,28 +259,72 @@ const Browser = ({ route }: IBrowserProps) => {
       }
     })();
 
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       aspect: [4, 3],
       quality: 1,
     });
 
     if (!result.cancelled) {
-      const { uri } = result as ImageInfo;
-      var filename: string = uri.replace(/^.*[\\\/]/, '');
-      var ext: string | null = reExt.exec(filename)![1];
+      const { uri, type } = result as ImageInfo;
+      const filename: string = uri.replace(/^.*[\\\/]/, '');
+      const ext: string | null = reExt.exec(filename)![1];
+      const fileNamePrefix = type === 'image' ? 'IMG_' : 'VID_';
       FileSystem.moveAsync({
         from: uri,
         to:
           currentDir +
           '/' +
-          'Media_' +
+          fileNamePrefix +
           moment().format('DDMMYHmmss') +
           '.' +
           ext,
       })
         .then((_) => getFiles())
         .catch((err) => console.log(err));
+    }
+  };
+
+  const pickDocument = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      copyToCacheDirectory: false,
+    });
+
+    if (result.type === 'success') {
+      const { exists: fileExists } = await FileSystem.getInfoAsync(result.uri);
+      if (fileExists) {
+        Alert.alert(
+          'Conflicting File',
+          `The destination folder has a file with the same name ${result.name}`,
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'Replace the file',
+              onPress: () => {
+                FileSystem.copyAsync({
+                  from: result.uri,
+                  to: currentDir + '/' + result.name,
+                })
+                  .then((_) => {
+                    getFiles();
+                    handleSetSnack({
+                      message: `${result.name} successfully copied.`,
+                    });
+                  })
+                  .catch((_) =>
+                    handleSetSnack({
+                      message: 'An unexpected error importing the file.',
+                    })
+                  );
+              },
+              style: 'default',
+            },
+          ]
+        );
+      }
     }
   };
 
@@ -408,10 +453,17 @@ const Browser = ({ route }: IBrowserProps) => {
         actionItems={[
           'Camera Roll',
           'Multi Image Picker',
+          'Import File from Storage',
           'Download',
           'Cancel',
         ]}
-        itemIcons={['camera', 'image', 'file-download', 'close']}
+        itemIcons={[
+          'camera',
+          'image',
+          'drive-file-move-outline',
+          'file-download',
+          'close',
+        ]}
         onClose={setNewFileActionSheet}
         onItemPressed={(buttonIndex) => {
           if (buttonIndex === 0) {
@@ -419,10 +471,12 @@ const Browser = ({ route }: IBrowserProps) => {
           } else if (buttonIndex === 1) {
             setMultiImageVisible(true);
           } else if (buttonIndex === 2) {
+            pickDocument();
+          } else if (buttonIndex === 3) {
             setDownloadDialogVisible(true);
           }
         }}
-        cancelButtonIndex={3}
+        cancelButtonIndex={4}
         modalStyle={{ backgroundColor: colors.background2 }}
         itemTextStyle={{ color: colors.text }}
         titleStyle={{ color: colors.secondary }}
