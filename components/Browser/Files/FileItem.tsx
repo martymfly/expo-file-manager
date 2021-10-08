@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -30,7 +30,6 @@ type Props = {
   item: fileItem;
   currentDir: string;
   multiSelect: boolean;
-  getFiles: () => Promise<void>;
   toggleSelect: (arg0: fileItem) => void;
   setTransferDialog: (arg0: boolean) => void;
   setMoveOrCopy: (arg0: string) => void;
@@ -44,7 +43,6 @@ export default function FileItem({
   item,
   currentDir,
   multiSelect,
-  getFiles,
   toggleSelect,
   setTransferDialog,
   setMoveOrCopy,
@@ -55,8 +53,6 @@ export default function FileItem({
 }: Props) {
   const { colors } = useAppSelector((state) => state.theme.theme);
   const navigation = useNavigation<StackNavigationProp<any>>();
-  //const [renameDialogVisible, setRenameDialogVisible] = useState(false);
-  //const [fileNewName, setFileNewName] = useState(item.name);
   const [itemActionsOpen, setItemActionsOpen] = useState(false);
   const docDir = currentDir;
   const itemMime = mime.lookup(item.uri) || ' ';

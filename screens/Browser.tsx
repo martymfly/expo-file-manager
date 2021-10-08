@@ -117,7 +117,6 @@ const Browser = ({ route }: IBrowserProps) => {
     <FileItem
       item={item}
       currentDir={currentDir}
-      getFiles={getFiles}
       toggleSelect={toggleSelect}
       multiSelect={multiSelect}
       setTransferDialog={setDestinationDialogVisible}
@@ -205,13 +204,19 @@ const Browser = ({ route }: IBrowserProps) => {
             FileSystem.getInfoAsync(currentDir + '/' + fileName)
           );
           Promise.all(filesProms).then((results) => {
-            let tempfiles: fileItem[] = results.map((file) =>
-              Object({
+            let tempfiles: fileItem[] = results.map((file) => {
+              const name = file.uri.endsWith('/')
+                ? file.uri
+                    .slice(0, file.uri.length - 1)
+                    .split('/')
+                    .pop()
+                : file.uri.split('/').pop();
+              return Object({
                 ...file,
-                name: file.uri.split('/').pop(),
+                name,
                 selected: false,
-              })
-            );
+              });
+            });
             setFiles(tempfiles);
             const tempImageFiles = results.filter((file) => {
               let fileExtension = file.uri
