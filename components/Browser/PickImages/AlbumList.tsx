@@ -22,6 +22,7 @@ export const AlbumList = ({ albums, setSelectedAlbum }: AlbumListProps) => {
       renderItem={({ item }) => (
         <AlbumItem item={item} setSelectedAlbum={setSelectedAlbum} />
       )}
+      keyExtractor={(item) => item.id}
     />
   );
 };

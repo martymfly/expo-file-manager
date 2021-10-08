@@ -126,7 +126,7 @@ export default function PickImages({
       MediaLibrary.requestPermissionsAsync()
         .then((result) => {
           setIsMediaGranted(result.granted);
-          if (!result.granted) {
+          if (!result.granted || result.accessPrivileges === 'limited') {
             const alertOptions: AlertButton[] = [
               {
                 text: 'Go to App Settings',
@@ -140,14 +140,14 @@ export default function PickImages({
                 style: 'cancel',
               },
             ];
-            if (result.canAskAgain)
+            if (result.canAskAgain && result.accessPrivileges !== 'limited')
               alertOptions.push({
                 text: 'Request again',
                 onPress: () => requestMediaPermission(),
               });
             Alert.alert(
               'Denied Media Access',
-              'App needs access to media library',
+              'App needs access to all media library',
               [...alertOptions]
             );
           }
@@ -185,6 +185,17 @@ export default function PickImages({
         style={{ ...styles.container, backgroundColor: colors.background2 }}
       >
         <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+
+  if (albumsFetched && albums.length === 0)
+    return (
+      <View
+        style={{ ...styles.container, backgroundColor: colors.background2 }}
+      >
+        <Text style={{ color: colors.text, fontFamily: 'Poppins_600SemiBold' }}>
+          No Albums Found
+        </Text>
       </View>
     );
 

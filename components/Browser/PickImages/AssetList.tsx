@@ -36,6 +36,7 @@ export const AssetList = ({
           isSelecting={isSelecting}
         />
       )}
+      keyExtractor={(item) => item.albumId}
       onEndReached={() => {
         if (hasNextPage) getAlbumAssets(albumId, endCursor);
       }}

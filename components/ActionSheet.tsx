@@ -104,7 +104,7 @@ const ActionSheet = ({
         )}
         <FlatList
           data={actionItems}
-          keyExtractor={(_, index) => index.toString()}
+          keyExtractor={(item) => item}
           renderItem={({ item, index }) => (
             <ActionListItem item={item} index={index} />
           )}
