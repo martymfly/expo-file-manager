@@ -1,3 +1,4 @@
+// https://stackoverflow.com/a/14919494/13565880
 export default function humanFileSize(bytes, si = false, dp = 1) {
   const thresh = si ? 1000 : 1024;
 
