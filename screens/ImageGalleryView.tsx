@@ -43,6 +43,11 @@ const ImageGalleryView = ({ route }: Props) => {
       <TouchableOpacity
         style={{
           position: 'absolute',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(237, 240, 238, 0.3)',
+          borderRadius: 10,
           top: Constants.statusBarHeight,
           left: 10,
         }}
