@@ -21,6 +21,36 @@ Here are some other features:
 * Passcode protection
 * Unlock with biometrics
 
+<div align="center">
+  <h2 align="center">Screenshots</h2>
+</div>
+
+<div align="center">
+<img src="https://github.com/martymfly/expo-file-manager/blob/main/screenshots/1.png" height="500"/>
+  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<img src="https://github.com/martymfly/expo-file-manager/blob/main/screenshots/2.png" height="500"/>
+  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<img src="https://github.com/martymfly/expo-file-manager/blob/main/screenshots/3.png" height="500"/>
+</div>
+</br>
+</br>
+<div align="center">
+<img src="https://github.com/martymfly/expo-file-manager/blob/main/screenshots/4.png" height="500"/>
+  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<img src="https://github.com/martymfly/expo-file-manager/blob/main/screenshots/5.png" height="500"/>
+  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<img src="https://github.com/martymfly/expo-file-manager/blob/main/screenshots/6.png" height="500"/>
+</div>
+</br>
+</br>
+<div align="center">
+<img src="https://github.com/martymfly/expo-file-manager/blob/main/screenshots/7.png" height="500"/>
+  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<img src="https://github.com/martymfly/expo-file-manager/blob/main/screenshots/8.png" height="500"/>
+  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<img src="https://github.com/martymfly/expo-file-manager/blob/main/screenshots/9.png" height="500"/>
+</div>
+
 ### Run project in development
 
 1. Clone the repo
