@@ -5268,9 +5268,10 @@ react-native-gesture-handler@~1.10.2:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-image-gallery@martymfly/react-native-image-gallery:
+react-native-image-gallery@^2.1.5:
   version "2.1.5"
-  resolved "https://codeload.github.com/martymfly/react-native-image-gallery/tar.gz/f33ff11e4decfecfe8e7e0697ce0306933972ba8"
+  resolved "https://registry.yarnpkg.com/react-native-image-gallery/-/react-native-image-gallery-2.1.5.tgz#f524b92ef7284d30ffbbd63f93019e0647e23229"
+  integrity sha512-xC7nuPu4GUH0da6byofQ10LjtqlKj+VaLc0NHBJmeMHVvdvmRvFEO6UOq0Q0m/ePx3OQiPTNwGbf5BSPJEKa0w==
   dependencies:
     prop-types "^15.6.0"
     react-mixin "^3.0.5"

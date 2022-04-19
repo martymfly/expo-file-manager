@@ -36,7 +36,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-dialog": "*",
     "react-native-gesture-handler": "~1.10.2",
-    "react-native-image-gallery": "martymfly/react-native-image-gallery",
+    "react-native-image-gallery": "^2.1.5",
     "react-native-mime-types": "^2.3.0",
     "react-native-modal": "*",
     "react-native-paper": "^4.9.2",

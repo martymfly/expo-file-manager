@@ -29,7 +29,7 @@ const ImageGalleryView = ({ route }: Props) => {
   );
 
   const imageIndex = useCallback(
-    () => images.findIndex((item) => item.uri === prevDir + '/' + folderName),
+    () => images.findIndex((item) => item.uri === prevDir + folderName),
     []
   );
 
