@@ -15,9 +15,7 @@
     "@react-navigation/native": "*",
     "@react-navigation/stack": "*",
     "@reduxjs/toolkit": "^1.6.1",
-    "@types/react-redux": "^7.1.18",
     "axios": "*",
-    "crypto-es": "*",
     "expo": "~42.0.1",
     "expo-app-loading": "^1.1.2",
     "expo-barcode-scanner": "~10.2.2",
@@ -54,10 +52,10 @@
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
     "@types/react-native-image-gallery": "^2.1.1",
-    "@welldone-software/why-did-you-render": "^6.2.1",
+    "@types/react-redux": "^7.1.18",
     "typescript": "~4.0.0"
   },
-  "private": true,
+  "private": false,
   "name": "expo-file-manager",
   "version": "1.0.0"
 }
