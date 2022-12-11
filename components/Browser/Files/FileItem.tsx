@@ -116,6 +116,11 @@ export default function FileItem({
           folderName: item.name,
           prevDir: docDir,
         });
+      } else if (itemType === 'video') {
+        navigation.push('VideoPlayer', {
+          folderName: item.name,
+          prevDir: docDir,
+        });
       } else {
         navigation.push('MiscFileView', {
           folderName: item.name,
