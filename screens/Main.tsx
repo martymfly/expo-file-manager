@@ -18,7 +18,7 @@ import {
 
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AppLoading from 'expo-app-loading';
+import * as SplashScreen from 'expo-splash-screen';
 
 import { MainNavigator } from '../navigation/MainNavigator';
 
@@ -29,6 +29,8 @@ import { setLightTheme, setDarkTheme } from '../features/files/themeSlice';
 import { hideSnack } from '../features/files/snackbarSlice';
 
 import LockScreen from '../screens/LockScreen';
+
+SplashScreen.preventAutoHideAsync();
 
 LogBox.ignoreLogs([
   'VirtualizedLists should never',
@@ -81,7 +83,9 @@ export default function Main() {
     Poppins_700Bold,
   });
 
-  if (!fontsLoaded) return <AppLoading />;
+  useEffect(() => {
+    if (fontsLoaded) SplashScreen.hideAsync();
+  }, [fontsLoaded]);
 
   if (locked) {
     return <LockScreen setLocked={setLocked} />;
