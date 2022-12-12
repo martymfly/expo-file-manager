@@ -23,6 +23,7 @@ type IActionSheetProps = {
   onClose: (arg0: boolean) => void;
   actionItems: string[];
   title?: string;
+  numberOfLinesTitle: number;
   cancelButtonIndex?: number;
   modalStyle?: ViewStyle;
   itemStyle?: ViewStyle;
@@ -42,6 +43,7 @@ const ActionSheet = ({
   onClose,
   actionItems,
   title,
+  numberOfLinesTitle,
   cancelButtonIndex,
   modalStyle,
   itemStyle,
@@ -106,7 +108,13 @@ const ActionSheet = ({
       <View style={[styles.modalBody, modalStyle]}>
         {title && (
           <View style={styles.titleContainer}>
-            <Text style={[styles.titleText, titleStyle]}>{title}</Text>
+            <Text
+              style={[styles.titleText, titleStyle]}
+              ellipsizeMode="middle"
+              numberOfLines={numberOfLinesTitle}
+            >
+              {title}
+            </Text>
           </View>
         )}
         <FlatList
@@ -134,20 +142,19 @@ const styles = StyleSheet.create({
   },
   modalBody: {
     width: SIZE,
-    backgroundColor: 'white',
     position: 'absolute',
     bottom: 0,
-    padding: 5,
+    borderRadius: 10,
   },
   titleContainer: {
     width: SIZE,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 10,
   },
   titleText: {
     fontFamily: 'Poppins_500Medium',
-    color: 'gray',
     fontSize: 16,
     textAlign: 'center',
   },
@@ -158,14 +165,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    paddingHorizontal: 10,
   },
   itemText: {
     fontFamily: 'Poppins_400Regular',
-    color: 'gray',
     fontSize: 15,
   },
   iconContainer: {
-    marginLeft: 5,
     marginRight: 10,
   },
 });

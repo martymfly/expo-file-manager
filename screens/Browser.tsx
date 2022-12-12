@@ -457,6 +457,7 @@ const Browser = ({ route }: IBrowserProps) => {
     <View style={{ ...styles.container, backgroundColor: colors.background }}>
       <ActionSheet
         title={'Add a new file'}
+        numberOfLinesTitle={undefined}
         visible={newFileActionSheet}
         actionItems={[
           'Camera Roll',

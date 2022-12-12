@@ -140,6 +140,7 @@ export default function FileItem({
             ? 'Choose an action for the selected items'
             : decodeURI(item.name)
         }
+        numberOfLinesTitle={multiSelect ? undefined : 1}
         visible={itemActionsOpen}
         actionItems={['Rename', 'Move', 'Copy', 'Share', 'Delete', 'Cancel']}
         itemIcons={[
