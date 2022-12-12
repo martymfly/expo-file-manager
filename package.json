@@ -4,7 +4,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@expo-google-fonts/poppins": "^0.2.2",
@@ -35,7 +36,7 @@
     "react-native": "0.68.2",
     "react-native-dialog": "^9.3.0",
     "react-native-gesture-handler": "~2.2.1",
-    "react-native-image-gallery": "^2.1.5",
+    "react-native-image-viewing": "^0.2.2",
     "react-native-mime-types": "^2.3.0",
     "react-native-modal": "^13.0.1",
     "react-native-paper": "^4.9.2",
@@ -52,8 +53,9 @@
     "@babel/core": "^7.12.9",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.67.6",
-    "@types/react-native-image-gallery": "^2.1.1",
     "@types/react-redux": "^7.1.18",
+    "patch-package": "^6.5.0",
+    "postinstall-postinstall": "^2.1.0",
     "typescript": "~4.3.5"
   },
   "private": false,

@@ -45,7 +45,11 @@ const LockScreen = ({ setLocked }: ILockScreenProps) => {
   };
 
   useEffect(() => {
-    getSecret();
+    let isMounted = true;
+    if (isMounted) getSecret();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {

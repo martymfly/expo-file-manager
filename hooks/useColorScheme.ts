@@ -9,11 +9,11 @@ export default function useColorScheme(
   let timeout = useRef<NodeJS.Timeout | null>(null).current;
 
   useEffect(() => {
-    Appearance.addChangeListener(onColorSchemeChange);
+    const subscription = Appearance.addChangeListener(onColorSchemeChange);
 
     return () => {
       resetCurrentTimeout();
-      Appearance.removeChangeListener(onColorSchemeChange);
+      subscription.remove();
     };
   }, []);
 

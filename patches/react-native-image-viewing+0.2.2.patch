@@ -1,0 +1,145 @@
+diff --git a/node_modules/react-native-image-viewing/dist/ImageViewing.js b/node_modules/react-native-image-viewing/dist/ImageViewing.js
+index 3d7641a..6ac697c 100644
+--- a/node_modules/react-native-image-viewing/dist/ImageViewing.js
++++ b/node_modules/react-native-image-viewing/dist/ImageViewing.js
+@@ -6,7 +6,7 @@
+  *
+  */
+ import React, { useCallback, useRef, useEffect } from "react";
+-import { Animated, Dimensions, StyleSheet, View, VirtualizedList, Modal, } from "react-native";
++import { Animated, Dimensions, StyleSheet, View, VirtualizedList, } from "react-native";
+ import ImageItem from "./components/ImageItem/ImageItem";
+ import ImageDefaultHeader from "./components/ImageDefaultHeader";
+ import StatusBarManager from "./components/StatusBarManager";
+@@ -37,7 +37,7 @@ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClos
+     if (!visible) {
+         return null;
+     }
+-    return (<Modal transparent={presentationStyle === "overFullScreen"} visible={visible} presentationStyle={presentationStyle} animationType={animationType} onRequestClose={onRequestCloseEnhanced} supportedOrientations={["portrait"]} hardwareAccelerated>
++    return (<>
+       <StatusBarManager presentationStyle={presentationStyle}/>
+       <View style={[styles.container, { opacity, backgroundColor }]}>
+         <Animated.View style={[styles.header, { transform: headerTransform }]}>
+@@ -62,7 +62,7 @@ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClos
+     })}
+           </Animated.View>)}
+       </View>
+-    </Modal>);
++    </>);
+ }
+ const styles = StyleSheet.create({
+     container: {
+@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
+         position: "absolute",
+         width: "100%",
+         zIndex: 1,
+-        top: 0,
++        top: 20,
+     },
+     footer: {
+         position: "absolute",
+diff --git a/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.android.js b/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.android.js
+index 5fcaa9f..0035568 100644
+--- a/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.android.js
++++ b/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.android.js
+@@ -6,7 +6,7 @@
+  *
+  */
+ import React, { useCallback, useRef, useState } from "react";
+-import { Animated, ScrollView, Dimensions, StyleSheet, } from "react-native";
++import { Animated, ScrollView, Dimensions, StyleSheet, View, } from "react-native";
+ import useImageDimensions from "../../hooks/useImageDimensions";
+ import usePanResponder from "../../hooks/usePanResponder";
+ import { getImageStyles, getImageTransform } from "../../utils";
+@@ -18,7 +18,8 @@ const SCREEN_WIDTH = SCREEN.width;
+ const SCREEN_HEIGHT = SCREEN.height;
+ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
+     const imageContainer = useRef(null);
+-    const imageDimensions = useImageDimensions(imageSrc);
++    const sourceHasDimensions = imageSrc.width !== undefined && imageSrc.height !== undefined;
++    const imageDimensions = sourceHasDimensions ? {width: imageSrc.width, height: imageSrc.height} : useImageDimensions(imageSrc);
+     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
+     const scrollValueY = new Animated.Value(0);
+     const [isLoaded, setLoadEnd] = useState(false);
+@@ -69,7 +70,7 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
+         onScrollEndDrag,
+     })}>
+       <Animated.Image {...panHandlers} source={imageSrc} style={imageStylesWithOpacity} onLoad={onLoaded}/>
+-      {(!isLoaded || !imageDimensions) && <ImageLoading />}
++      {!isLoaded && <View style={{position: 'absolute'}}><ImageLoading /></View>}
+     </ScrollView>);
+ };
+ const styles = StyleSheet.create({
+diff --git a/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.ios.js b/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.ios.js
+index 0708505..fa0237a 100644
+--- a/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.ios.js
++++ b/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.ios.js
+@@ -20,7 +20,8 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
+     const scrollViewRef = useRef(null);
+     const [loaded, setLoaded] = useState(false);
+     const [scaled, setScaled] = useState(false);
+-    const imageDimensions = useImageDimensions(imageSrc);
++    const sourceHasDimensions = imageSrc.width !== undefined && imageSrc.height !== undefined;
++    const imageDimensions = sourceHasDimensions ? {width: imageSrc.width, height: imageSrc.height} : useImageDimensions(imageSrc);
+     const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN);
+     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
+     const scrollValueY = new Animated.Value(0);
+@@ -60,10 +61,10 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
+       <ScrollView ref={scrollViewRef} style={styles.listItem} pinchGestureEnabled showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} maximumZoomScale={maxScale} contentContainerStyle={styles.imageScrollContainer} scrollEnabled={swipeToCloseEnabled} onScrollEndDrag={onScrollEndDrag} scrollEventThrottle={1} {...(swipeToCloseEnabled && {
+         onScroll,
+     })}>
+-        {(!loaded || !imageDimensions) && <ImageLoading />}
+         <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
+-          <Animated.Image source={imageSrc} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)}/>
++        <Animated.Image source={imageSrc} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)}/>
+         </TouchableWithoutFeedback>
++        {!loaded && <View style={{position: 'absolute'}}><ImageLoading /></View>}
+       </ScrollView>
+     </View>);
+ };
+diff --git a/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js b/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js
+index 99dcbc7..08ad003 100644
+--- a/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js
++++ b/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js
+@@ -12,7 +12,7 @@ const SCREEN = Dimensions.get("window");
+ const SCREEN_WIDTH = SCREEN.width;
+ const SCREEN_HEIGHT = SCREEN.height;
+ const MIN_DIMENSION = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT);
+-const SCALE_MAX = 2;
++const SCALE_MAX = 5;
+ const DOUBLE_TAP_DELAY = 300;
+ const OUT_BOUND_MULTIPLIER = 0.75;
+ const usePanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZoomEnabled, onLongPress, delayLongPress, }) => {
+@@ -29,6 +29,19 @@ const usePanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZo
+     const scaleValue = new Animated.Value(initialScale);
+     const translateValue = new Animated.ValueXY(initialTranslate);
+     const imageDimensions = getImageDimensionsByTranslate(initialTranslate, SCREEN);
++    useEffect(() => {
++        onZoom(false);
++        Animated.parallel([
++            Animated.timing(scaleValue, {
++                toValue: initialScale,
++                duration: 300,
++                useNativeDriver: false,
++            }),
++        ], { stopTogether: false }).start(() => {
++            currentScale = initialScale;
++            currentTranslate = initialTranslate;
++        });
++    });
+     const getBounds = (scale) => {
+         const scaledImageDimensions = {
+             width: imageDimensions.width * scale,
+diff --git a/node_modules/react-native-image-viewing/dist/hooks/useZoomPanResponder.js b/node_modules/react-native-image-viewing/dist/hooks/useZoomPanResponder.js
+index 37a3376..4c45422 100644
+--- a/node_modules/react-native-image-viewing/dist/hooks/useZoomPanResponder.js
++++ b/node_modules/react-native-image-viewing/dist/hooks/useZoomPanResponder.js
+@@ -11,7 +11,7 @@ import { createPanResponder, getDistanceBetweenTouches, getImageTranslate, getIm
+ const SCREEN = Dimensions.get("window");
+ const SCREEN_WIDTH = SCREEN.width;
+ const SCREEN_HEIGHT = SCREEN.height;
+-const SCALE_MAX = 2;
++const SCALE_MAX = 5;
+ const DOUBLE_TAP_DELAY = 300;
+ const OUT_BOUND_MULTIPLIER = 0.75;
+ const useZoomPanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZoomEnabled }) => {

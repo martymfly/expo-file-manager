@@ -87,7 +87,7 @@ export default function Main() {
     if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded]);
 
-  if (locked) {
+  if (locked && fontsLoaded) {
     return <LockScreen setLocked={setLocked} />;
   }
 

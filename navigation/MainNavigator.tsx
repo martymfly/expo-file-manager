@@ -16,6 +16,7 @@ const Tab = createBottomTabNavigator();
 
 export const MainNavigator: React.FC = () => {
   const { colors } = useAppSelector((state) => state.theme.theme);
+  const { visible } = useAppSelector((state) => state.tabbarStyle);
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -23,6 +24,9 @@ export const MainNavigator: React.FC = () => {
         headerShown: false,
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          display: visible ? 'flex' : 'none',
+        },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: any;
           if (route.name === 'Home') {

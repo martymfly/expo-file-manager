@@ -1,13 +1,12 @@
-import React, { useCallback } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import Constants from 'expo-constants';
-import { Feather } from '@expo/vector-icons';
-import Gallery, { RemoteImage } from 'react-native-image-gallery';
+import ImageView from 'react-native-image-viewing';
 
 import { StackScreenProps } from '@react-navigation/stack';
-import { useAppSelector } from '../hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import { useNavigation } from '@react-navigation/native';
+import { setTabbarVisible } from '../features/files/tabbarStyleSlice';
 
 type FileViewParamList = {
   ImageGalleryView: { prevDir: string; folderName: string };
@@ -17,46 +16,43 @@ type Props = StackScreenProps<FileViewParamList, 'ImageGalleryView'>;
 
 const ImageGalleryView = ({ route }: Props) => {
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const { colors } = useAppSelector((state) => state.theme.theme);
   const { prevDir, folderName } = route.params;
   const { images } = useAppSelector((state) => state.images);
-  const galleryImageArray: RemoteImage[] = images.map((image) =>
-    Object({
-      source: {
-        uri: image.uri,
-      },
-    })
-  );
 
-  const imageIndex = useCallback(
+  const initialImageIndex = useCallback(
     () => images.findIndex((item) => item.uri === prevDir + folderName),
     []
   );
 
+  useEffect(() => {
+    dispatch(setTabbarVisible(false));
+
+    return () => {
+      dispatch(setTabbarVisible(true));
+    };
+  }, []);
+
   return (
-    <>
-      <Gallery
-        initialPage={imageIndex()}
-        style={{ flex: 1, backgroundColor: colors.background }}
-        images={galleryImageArray}
+    <View style={{ ...styles.container, backgroundColor: colors.background }}>
+      <ImageView
+        images={images}
+        imageIndex={initialImageIndex()}
+        visible={true}
+        onRequestClose={() => navigation.goBack()}
+        keyExtractor={(_, index) => index.toString()}
+        doubleTapToZoomEnabled
+        swipeToCloseEnabled
       />
-      <TouchableOpacity
-        style={{
-          position: 'absolute',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: 'rgba(237, 240, 238, 0.3)',
-          borderRadius: 10,
-          top: Constants.statusBarHeight,
-          left: 10,
-        }}
-        onPress={() => navigation.goBack()}
-      >
-        <Feather name="chevron-left" size={36} color="white" />
-      </TouchableOpacity>
-    </>
+    </View>
   );
 };
 
 export default ImageGalleryView;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
