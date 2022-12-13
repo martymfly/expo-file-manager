@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   Platform,
   Alert,
   BackHandler,
+  TextInput,
 } from 'react-native';
 
 import Dialog from 'react-native-dialog';
@@ -69,6 +70,7 @@ const Browser = ({ route }: IBrowserProps) => {
   const [renameDialogVisible, setRenameDialogVisible] = useState(false);
   const [newFileName, setNewFileName] = useState('');
   const [renamingFile, setRenamingFile] = useState<fileItem>();
+  const renameInputRef = useRef<TextInput>(null);
   const [multiImageVisible, setMultiImageVisible] = useState(false);
   const [importProgressVisible, setImportProgressVisible] = useState(false);
   const [destinationDialogVisible, setDestinationDialogVisible] =
@@ -422,6 +424,20 @@ const Browser = ({ route }: IBrowserProps) => {
       });
   };
 
+  const [initialSelectionDone, setInitialSelectionDone] = useState(false);
+
+  useEffect(() => {
+    if (renameDialogVisible && Platform.OS === 'android') {
+      setTimeout(() => {
+        renameInputRef.current?.focus();
+      }, 100);
+    }
+    if (!renameDialogVisible)
+      setTimeout(() => {
+        setInitialSelectionDone(false);
+      }, 500);
+  }, [renameDialogVisible]);
+
   const onRename = async () => {
     const filePathSplit = renamingFile.uri.split('/');
     const fileFolderPath = filePathSplit
@@ -511,10 +527,22 @@ const Browser = ({ route }: IBrowserProps) => {
         setDownloadDialog={setDownloadDialogVisible}
       />
       <Dialog.Container visible={renameDialogVisible}>
-        <Dialog.Title>Rename {decodeURI(renamingFile?.name)}</Dialog.Title>
+        <Dialog.Title style={{ color: 'black' }}>Rename file</Dialog.Title>
         <Dialog.Input
+          textInputRef={renameInputRef}
           value={decodeURI(newFileName)}
-          onChangeText={(text) => setNewFileName(text)}
+          onChangeText={(text) => {
+            setNewFileName(text);
+          }}
+          onKeyPress={() => {
+            setInitialSelectionDone(true);
+          }}
+          selection={
+            !initialSelectionDone
+              ? { start: 0, end: decodeURI(newFileName).split('.')[0].length }
+              : undefined
+          }
+          style={{ color: 'black' }}
         ></Dialog.Input>
         <Dialog.Button
           label="Cancel"
@@ -522,7 +550,7 @@ const Browser = ({ route }: IBrowserProps) => {
             setRenameDialogVisible(false);
           }}
         />
-        <Dialog.Button label="OK" onPress={() => onRename()} />
+        <Dialog.Button label="Rename" onPress={() => onRename()} />
       </Dialog.Container>
       <GalleryDialog
         dialogStyle={{
