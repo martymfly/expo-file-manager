@@ -7,7 +7,7 @@ export const base64reg = /data:image\/[^;]+;base64,/;
 
 export const fileIcons = {
   json: 'code-json',
-  pdf: 'file-pdf-outline',
+  pdf: 'file-pdf-box',
   msword: 'file-word-outline',
   'vnd.openxmlformats-officedocument.wordprocessingml.document':
     'file-word-outline',

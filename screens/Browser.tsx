@@ -295,13 +295,35 @@ const Browser = ({ route }: IBrowserProps) => {
     }
   };
 
+  async function handleCopy(
+    from: string,
+    to: string,
+    successMessage: string,
+    errorMessage: string
+  ): Promise<void> {
+    FileSystem.copyAsync({ from, to })
+      .then(() => {
+        getFiles();
+        handleSetSnack({
+          message: successMessage,
+        });
+      })
+      .catch(() =>
+        handleSetSnack({
+          message: errorMessage,
+        })
+      );
+  }
+
   const pickDocument = async () => {
     const result = await DocumentPicker.getDocumentAsync({
       copyToCacheDirectory: false,
     });
 
     if (result.type === 'success') {
-      const { exists: fileExists } = await FileSystem.getInfoAsync(result.uri);
+      const { exists: fileExists } = await FileSystem.getInfoAsync(
+        currentDir + '/' + result.name
+      );
       if (fileExists) {
         Alert.alert(
           'Conflicting File',
@@ -314,25 +336,23 @@ const Browser = ({ route }: IBrowserProps) => {
             {
               text: 'Replace the file',
               onPress: () => {
-                FileSystem.copyAsync({
-                  from: result.uri,
-                  to: currentDir + '/' + result.name,
-                })
-                  .then((_) => {
-                    getFiles();
-                    handleSetSnack({
-                      message: `${result.name} successfully copied.`,
-                    });
-                  })
-                  .catch((_) =>
-                    handleSetSnack({
-                      message: 'An unexpected error importing the file.',
-                    })
-                  );
+                handleCopy(
+                  result.uri,
+                  currentDir + '/' + result.name,
+                  `${result.name} successfully copied.`,
+                  'An unexpected error importing the file.'
+                );
               },
               style: 'default',
             },
           ]
+        );
+      } else {
+        handleCopy(
+          result.uri,
+          currentDir + '/' + result.name,
+          `${result.name} successfully copied.`,
+          'An unexpected error importing the file.'
         );
       }
     }
